@@ -1,27 +1,23 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
+  Entity as TOEntity,
   Column,
-  BaseEntity,
   Index,
-  CreateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm";
 import { IsEmail, Length } from "class-validator";
 import bcrypt from "bcrypt";
-import { instanceToPlain, Exclude } from 'class-transformer'
+import { Exclude } from "class-transformer";
+import {Post} from './index'
 
-@Entity("users")
-export class User extends BaseEntity {
-//!Removed for User.findOne() to work
-//   constructor(user: Partial<User>) {
-//     super();
-//     Object.assign(this, user);
-//   }
-
-  @Exclude()
-  @PrimaryGeneratedColumn()
-  id: number;
+import Entity from "./Entity";
+@TOEntity("users")
+export default class User extends Entity {
+  //!Removed for User.findOne() to work
+  //   constructor(user: Partial<User>) {
+  //     super();
+  //     Object.assign(this, user);
+  //   }
 
   @Index()
   @IsEmail()
@@ -38,18 +34,11 @@ export class User extends BaseEntity {
   @Length(6, 255, { message: "Password must be more than 6 characters" })
   password: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @CreateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => Post, post => post.user)
+  posts: Post[];
 
   @BeforeInsert()
   async hashPasword() {
     this.password = await bcrypt.hash(this.password, 6);
-  }
-
-  toJSON() {
-      return instanceToPlain(this)
   }
 }

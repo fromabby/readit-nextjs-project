@@ -32,6 +32,6 @@
     "scripts": {
         "dev": "nodemon --exec ts-node src/server.ts",
         "start": "ts-node src/server.ts",
-        "typeorm": "typeorm-ts-node-commonjs"
+        "typeorm": "ts-node ./node_modules/typeorm/cli.js"
     }
 }
