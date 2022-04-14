@@ -1,10 +1,10 @@
 import { Router } from "express";
-import auth from '../middleware/auth'
+import { auth as authorize } from "../middlewares/index";
 
 const router = Router();
-const post = require('../controllers/postController')
+const { post } = require('../controllers/index')
 
-router.post("/new", auth, post.createPost);
+router.post("/new", authorize, post.createPost);
 router.put("/update/:id", post.updatePost);
 router.delete("/delete/:id", post.deletePost);
 

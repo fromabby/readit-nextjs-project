@@ -1,6 +1,6 @@
 import { isEmpty, validate } from "class-validator";
 import { Request, Response } from "express";
-import { User } from "../models/index";
+import { User } from "../entities/index";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";

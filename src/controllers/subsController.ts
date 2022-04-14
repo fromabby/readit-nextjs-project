@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import auth from "../middleware/auth";
-import { User, Subs, Post } from "../models";
+import { User, Subs } from "../entities/index";
 import { isEmpty } from "class-validator";
 import { connectionSource } from "../data-source";
 
@@ -21,15 +20,13 @@ exports.createSub = async (req: Request, res: Response) => {
       .where("lower(sub.name) = :name", { name: name.toLowerCase() })
       .getOne();
 
-    if (sub) errors.name = "Sub exists already";
+    if (sub) errors.name = "Sub already exists";
 
-    if (Object.keys(errors).length > 0) {
-      throw errors;
-    }
+    if (Object.keys(errors).length > 0) throw errors
 
   } catch (error) {
     return res.status(400).json({
-      error: 'Something went wrong',
+      error
     });
   }
 

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import auth from "../middleware/auth";
-import { Post, Subs } from "../models";
+import { Post, Subs } from "../entities/index";
 
 exports.createPost = async (req: Request, res: Response) => {
   const { title, body, subName } = req.body;

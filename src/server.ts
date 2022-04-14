@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 dotenv.config({ path: path.resolve(__dirname + "/.env") });
 
 import { authRoutes, postRoutes, subsRoutes } from "./routes/index";
-import trim from "./middleware/trim";
+import { trim } from "./middlewares/index";
 
 const app = express();
 const PORT = process.env.PORT
