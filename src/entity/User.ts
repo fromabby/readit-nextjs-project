@@ -13,10 +13,11 @@ import { instanceToPlain, Exclude } from 'class-transformer'
 
 @Entity("users")
 export class User extends BaseEntity {
-  constructor(user: Partial<User>) {
-    super();
-    Object.assign(this, user);
-  }
+//!Removed for User.findOne() to work
+//   constructor(user: Partial<User>) {
+//     super();
+//     Object.assign(this, user);
+//   }
 
   @Exclude()
   @PrimaryGeneratedColumn()
