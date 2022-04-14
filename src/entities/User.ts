@@ -5,9 +5,9 @@ import {
     BeforeInsert,
     OneToMany
 } from 'typeorm'
-import bcrypt from 'bcrypt'
 import { IsEmail, Length } from 'class-validator'
 import { Exclude } from 'class-transformer'
+import bcrypt from 'bcrypt'
 
 import Entity from './Entity'
 import { Post } from './index'

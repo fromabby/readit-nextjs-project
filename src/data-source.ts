@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User, Post, Subs } from './entities/index'
+import { User, Post, Subs, Comment } from './entities/index'
 
 export const connectionSource = new DataSource({
     migrationsTableName: 'migrations',
@@ -12,7 +12,7 @@ export const connectionSource = new DataSource({
     database: 'readit',
     synchronize: true,
     logging: true,
-    entities: [User, Post, Subs],
+    entities: [User, Post, Subs, Comment],
     migrations: [],
     subscribers: []
 })

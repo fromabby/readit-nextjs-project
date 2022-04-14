@@ -15,22 +15,16 @@ exports.createSub = async (req: Request, res: Response) => {
         if (isEmpty(name)) errors.name = 'Name must not be empty'
         if (isEmpty(title)) errors.title = 'title must not be empty'
 
-        const sub = await connectionSource
+        const subRecord = await connectionSource
             .getRepository(Subs)
             .createQueryBuilder('sub')
             .where('lower(sub.name) = :name', { name: name.toLowerCase() })
             .getOne()
 
-        if (sub) errors.name = 'Sub already exists'
+        if (subRecord) errors.name = 'Sub already exists'
 
         if (Object.keys(errors).length > 0) throw errors
-    } catch (error) {
-        return res.status(400).json({
-            error
-        })
-    }
 
-    try {
         const sub = new Subs()
         sub.title = title
         sub.description = description
@@ -39,9 +33,9 @@ exports.createSub = async (req: Request, res: Response) => {
 
         await sub.save()
 
-        return res.json(sub)
+        res.json(sub)
     } catch (error) {
-        return res.status(400).json({
+        res.status(400).json({
             error
         })
     }

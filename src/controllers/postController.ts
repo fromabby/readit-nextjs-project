@@ -7,11 +7,8 @@ exports.createPost = async (req: Request, res: Response) => {
 
     const user = res.locals.user
 
-    if (title.trim() === '') {
-        return res.status(400).json({
-            error: 'Title must not be empty'
-        })
-    }
+    if (title.trim() === '')
+        return res.status(400).json({ error: 'Title must not be empty' })
 
     try {
         const sub = await Subs.findOneOrFail({ where: { name: subName } })
@@ -25,9 +22,9 @@ exports.createPost = async (req: Request, res: Response) => {
 
         await post.save()
 
-        return res.json(post)
+        res.json(post)
     } catch (error) {
-        return res.status(500).json({
+        res.status(500).json({
             error: 'cannot post'
         })
     }
@@ -37,9 +34,38 @@ exports.getMyPosts = async (req: Request, res: Response) => {}
 
 exports.getMyPost = async (req: Request, res: Response) => {}
 
-exports.getPosts = async (req: Request, res: Response) => {}
+exports.getPosts = async (req: Request, res: Response) => {
+    try {
+        const posts = await Post.find({
+            order: { createdAt: 'DESC' },
+        })
 
-exports.getPost = async (req: Request, res: Response) => {}
+        res.json(posts)
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.getPost = async (req: Request, res: Response) => {
+    const { identifier, slug } = req.params
+    try {
+        const post = await Post.findOneOrFail({
+            where: {
+                identifier,
+                slug
+            }, 
+            relations: ['sub', 'comments']
+        })
+
+        res.json(post)
+    } catch (error) {
+        res.status(500).json({
+            error: 'Post not found'
+        })
+    }
+}
 
 exports.updatePost = async (req: Request, res: Response) => {}
 

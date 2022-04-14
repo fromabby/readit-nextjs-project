@@ -41,11 +41,9 @@ exports.register = async (req: Request, res: Response) => {
 
         await user.save()
 
-        return res.json(user)
-        //TODO: return the user
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ error: 'something went wrong' })
+        res.json(user)
+    } catch (error) {
+        res.status(500).json({ error: 'something went wrong' })
     }
 }
 
@@ -58,9 +56,8 @@ exports.login = async (req: Request, res: Response) => {
         if (isEmpty(username)) errors.username = 'Username must not be empty'
         if (isEmpty(password)) errors.password = 'Password must not be empty'
 
-        if (Object.keys(errors).length > 0) {
-            return res.status(400).json({ errors })
-        }
+        if (Object.keys(errors).length > 0) return res.status(400).json({ errors })
+
         const user = await User.findOne({ where: { username } })
 
         if (!user) return res.status(404).json({ error: 'User not found' })
@@ -70,8 +67,7 @@ exports.login = async (req: Request, res: Response) => {
         if (!passwordMatch)
             return res.status(401).json({ password: 'Password is incorrect' })
 
-        console.log(process.env.JWT_SECRET)
-        const token = jwt.sign({ username }, process.env.JWT_SECRET)
+        const token = jwt.sign({ username }, process.env.JWT_SECRET!)
 
         res.set(
             'Set-Cookie',
@@ -84,14 +80,14 @@ exports.login = async (req: Request, res: Response) => {
             })
         )
 
-        return res.json(user)
-    } catch (err) {
-        console.log(err)
+        res.json(user)
+    } catch (error) {
+        res.status(500).json({ error })
     }
 }
 
 exports.getMyProfile = (_: Request, res: Response) => {
-    return res.json(res.locals.user)
+    res.json(res.locals.user)
 }
 
 exports.logout = async (_: Request, res: Response) => {
@@ -107,13 +103,13 @@ exports.logout = async (_: Request, res: Response) => {
             })
         )
 
-        return res.status(200).json({
-            success: true
+        res.status(200).json({
+            success: true,
+            message: 'User has been logged out.'
         })
-    } catch (err) {
-        console.log(err)
-        return res.status(401).json({
-            error: 'Unauthenticated'
+    } catch (error) {
+        res.status(401).json({
+            error: 'User is not logged in.'
         })
     }
 }

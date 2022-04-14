@@ -9,12 +9,12 @@ import cookieParser from 'cookie-parser'
 // console.log(path.resolve(__dirname+'/.env'))
 dotenv.config({ path: path.resolve(__dirname + '/.env') })
 
-import { authRoutes, postRoutes, subsRoutes } from './routes/index'
+import { authRoutes, postRoutes, subsRoutes, commentRoutes } from './routes/index'
 import { trim } from './middlewares/index'
 
 const app = express()
 const PORT = process.env.PORT
-const ENVIRONMENT = process.env.NODE_ENV
+// const ENVIRONMENT = process.env.NODE_ENV
 
 app.use(cookieParser())
 
@@ -25,8 +25,9 @@ app.use(trim)
 app.use('/api/auth', authRoutes)
 app.use('/api/post', postRoutes)
 app.use('/api/subs', subsRoutes)
+app.use('/api/comment', commentRoutes)
 
-app.get('/', (req, res) => res.send('Hello world'))
+app.get('/', (_, res) => res.send('Hello world'))
 
 app.listen(PORT, async () => {
     console.log(`server running at http://localhost:${PORT}`)
