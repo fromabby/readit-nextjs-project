@@ -1,22 +1,18 @@
-import {
-    PrimaryGeneratedColumn,
-    BaseEntity,
-    CreateDateColumn,
-  } from "typeorm";
-  import { instanceToPlain, Exclude } from 'class-transformer'
+import { PrimaryGeneratedColumn, BaseEntity, CreateDateColumn } from 'typeorm'
+import { instanceToPlain, Exclude } from 'class-transformer'
 
-  export default abstract class Entity extends BaseEntity {
+export default abstract class Entity extends BaseEntity {
     @Exclude()
     @PrimaryGeneratedColumn()
-    id: number;
-  
+    id: number
+
     @CreateDateColumn()
-    createdAt: Date;
-  
+    createdAt: Date
+
     @CreateDateColumn()
-    updatedAt: Date;
-  
+    updatedAt: Date
+
     toJSON() {
         return instanceToPlain(this)
     }
-  }
+}
