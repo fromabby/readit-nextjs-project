@@ -6,6 +6,21 @@ import cookie from 'cookie'
 
 import { User } from '../entities/index'
 
+const mapErrors = (errors: Object[]) => {
+    // let mappedErrors: any = {}
+
+    // errors.forEach((e: any) => {
+    //     const key = e.property
+    //     const value = Object.entries(e.constraints)[0][1]
+
+    //     mappedErrors[key] = value
+    // })
+
+    return errors.reduce((prev: any, err: any) => {
+        prev[err.property] = Object.entries(err.constraints)[0][1]
+        return prev
+    }, {})
+}
 exports.register = async (req: Request, res: Response) => {
     const { email, username, password } = req.body
 
@@ -34,9 +49,7 @@ exports.register = async (req: Request, res: Response) => {
         errors = await validate(user)
 
         if (errors.length > 0) {
-            return res.status(400).json({
-                errors
-            })
+            return res.status(400).json(mapErrors(errors))
         }
 
         await user.save()
@@ -55,17 +68,20 @@ exports.login = async (req: Request, res: Response) => {
 
         if (isEmpty(username)) errors.username = 'Username must not be empty'
         if (isEmpty(password)) errors.password = 'Password must not be empty'
-
-        if (Object.keys(errors).length > 0) return res.status(400).json({ errors })
+        
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json(errors)
+        }
 
         const user = await User.findOne({ where: { username } })
 
-        if (!user) return res.status(404).json({ error: 'User not found' })
+        if (!user) return res.status(404).json({ username: 'User not found' })
 
-        const passwordMatch = await bcrypt.compare(password, user.password)
+        const passwordMatches = await bcrypt.compare(password, user.password)
 
-        if (!passwordMatch)
+        if (!passwordMatches) {
             return res.status(401).json({ password: 'Password is incorrect' })
+        }
 
         const token = jwt.sign({ username }, process.env.JWT_SECRET!)
 
@@ -82,7 +98,7 @@ exports.login = async (req: Request, res: Response) => {
 
         res.json(user)
     } catch (error) {
-        res.status(500).json({ error })
+        res.status(500).json({ error: 'Something went wrong' })
     }
 }
 

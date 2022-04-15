@@ -11,21 +11,23 @@ import bcrypt from 'bcrypt'
 
 import Entity from './Entity'
 import { Post } from './index'
+
 @TOEntity('users')
 export default class User extends Entity {
     @Index()
-    @IsEmail()
+    @IsEmail(undefined, { message: 'Must be a valid email address'})
+    @Length(1, 255, { message: 'Email is empty' })
     @Column({ unique: true })
     email: string
 
     @Index()
-    @Length(6, 255, { message: 'Username must be at least 6 characters long' })
+    @Length(6, 255, { message: 'Must be at least 6 characters long' })
     @Column({ unique: true })
     username: string
 
     @Exclude()
     @Column()
-    @Length(6, 255, { message: 'Password must be more than 6 characters' })
+    @Length(6, 255, { message: 'Must be at least 6 characters' })
     password: string
 
     @OneToMany(() => Post, post => post.user)

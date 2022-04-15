@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import path from 'path'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 // console.log(path.resolve(__dirname+'/.env'))
 dotenv.config({ path: path.resolve(__dirname + '/.env') })
@@ -16,11 +17,16 @@ const app = express()
 const PORT = process.env.PORT
 // const ENVIRONMENT = process.env.NODE_ENV
 
-app.use(cookieParser())
 
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(trim)
+app.use(cookieParser())
+app.use(cors({
+    credentials: true,
+    origin: process.env.ORIGIN,
+    optionsSuccessStatus: 200
+}))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/post', postRoutes)
