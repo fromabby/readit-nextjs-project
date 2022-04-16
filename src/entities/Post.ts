@@ -5,9 +5,12 @@ import {
     ManyToOne,
     OneToMany,
     JoinColumn,
-    BeforeInsert
+    BeforeInsert,
+    AfterLoad
 } from 'typeorm'
 
+import { Expose } from 'class-transformer'
+ 
 import Entity from './Entity'
 import { User, Comment, Subs } from './index'
 
@@ -32,6 +35,9 @@ export default class Post extends Entity {
     @Column()
     subName: string
 
+    @Column()
+    username: string
+
     @ManyToOne(() => User, user => user.posts)
     @JoinColumn({ name: 'username', referencedColumnName: 'username' })
     user: User
@@ -42,6 +48,17 @@ export default class Post extends Entity {
 
     @OneToMany(() => Comment, comment => comment.post)
     comments: Comment[]
+
+    @Expose() get url(): string {
+        return `/r/${this.subName}/${this.identifier}/${this.slug}`
+    }
+
+    // protected url: string
+
+    // @AfterLoad()
+    // createFields() {
+    //     this.url = `/r/${this.subName}/${this.identifier}/${this.slug}`
+    // }
 
     @BeforeInsert()
     makeIdAndSlug() {

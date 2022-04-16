@@ -40,7 +40,10 @@ exports.getPosts = async (req: Request, res: Response) => {
             order: { createdAt: 'DESC' },
         })
 
-        res.json(posts)
+        res.json({
+            success: true,
+            posts
+        })
     } catch (error) {
         res.status(500).json({
             error
