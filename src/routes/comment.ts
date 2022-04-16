@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { auth as authorize } from '../middlewares/index'
+import { auth as authorize, user } from '../middlewares/index'
 
 const router = Router()
 const { comment } = require('../controllers/index')
 
-router.post('/:identifier/:slug/comments', authorize, comment.createComment)
+router.post('/:identifier/:slug/comments', user, authorize, comment.createComment)
 router.get('/me/comments', authorize, comment.getMyComments)
 router.get('/me/:id', authorize, comment.getMyComment)
 router.put('/me/:id', authorize, comment.updateMyComment)

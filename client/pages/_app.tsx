@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { AppProps } from 'next/app'
 import '../styles/tailwind.css'
+import '../styles/icons.css'
 
 import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { auth as authorize } from '../middlewares/index'
+import { auth as authorize, user } from '../middlewares/index'
 
 const router = Router()
 const { auth } = require('../controllers/index')
@@ -10,8 +10,8 @@ router.post('/new', auth.register)
 router.get('/password/forgot', auth.forgotPassword)
 router.put('/password/reset', auth.resetPassword)
 
-router.get('/me', authorize, auth.getMyProfile)
-router.put('/me', authorize, auth.updateProfile)
+router.get('/me', user, authorize, auth.getMyProfile)
+router.put('/me', user, authorize, auth.updateProfile)
 router.put('/me/password', authorize, auth.updatePassword)
 
 router.get('/users', authorize, auth.getUsers)

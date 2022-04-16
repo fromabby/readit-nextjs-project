@@ -38,8 +38,13 @@ exports.getPosts = async (req: Request, res: Response) => {
     try {
         const posts = await Post.find({
             order: { createdAt: 'DESC' },
+            relations: ['votes', 'sub']
         })
 
+        if(res.locals.user) {
+            posts.forEach(post => post.setUserVote(res.locals.user))
+        }
+        
         res.json({
             success: true,
             posts

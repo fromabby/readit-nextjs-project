@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { auth as authorize } from '../middlewares/index'
+import { auth as authorize, user } from '../middlewares/index'
 
 const router = Router()
 const { subs } = require('../controllers/index')
 
-router.post('/new', authorize, subs.createSub)
+router.post('/new', user, authorize, subs.createSub)
 router.get('/me/subs', authorize, subs.getMySubs)
 router.get('/me/:id', authorize, subs.getMySub)
 

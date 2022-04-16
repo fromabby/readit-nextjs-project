@@ -37,7 +37,7 @@ export default function Home() {
                 {/* Posts feed */}
                 <div className='w-160'>
                     {!loading && posts && posts.map(post => (
-                        <PostCard post={post}/>
+                        <PostCard post={post} key={post.identifier}/>
                     ))}
                 </div>
                 {/* Sidebar */}
