@@ -10,7 +10,7 @@ import cors from 'cors'
 // console.log(path.resolve(__dirname+'/.env'))
 dotenv.config({ path: path.resolve(__dirname + '/.env') })
 
-import { authRoutes, postRoutes, subsRoutes, commentRoutes } from './routes/index'
+import { authRoutes, postRoutes, subsRoutes, commentRoutes, voteRoutes } from './routes/index'
 import { trim } from './middlewares/index'
 
 const app = express()
@@ -32,6 +32,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/post', postRoutes)
 app.use('/api/subs', subsRoutes)
 app.use('/api/comment', commentRoutes)
+app.use('/api/vote', voteRoutes)
 
 app.get('/', (_, res) => res.send('Hello world'))
 
