@@ -5,7 +5,7 @@ const router = Router()
 const { auth } = require('../controllers/index')
 
 router.post('/login', auth.login)
-router.get('/logout', authorize, auth.logout)
+router.get('/logout', user, authorize, auth.logout)
 router.post('/new', auth.register)
 router.get('/password/forgot', auth.forgotPassword)
 router.put('/password/reset', auth.resetPassword)

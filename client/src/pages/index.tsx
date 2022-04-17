@@ -33,7 +33,7 @@ export default function Home() {
             <Head>
                 <title>readit: the front page of the internet</title>
             </Head>
-            <div className='container pt-4 flex'>
+            <div className='container flex pt-4'>
                 {/* Posts feed */}
                 <div className='w-160'>
                     {!loading && posts && posts.map(post => (

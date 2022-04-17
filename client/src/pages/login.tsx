@@ -2,30 +2,45 @@ import axios from 'axios'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import InputGroup from '../components/InputGroup'
+
+import { useAuthDispatch, useAuthState } from '../context/auth'
 
 export default function Register() {
     const router = useRouter()
+    const dispatch = useAuthDispatch()
+
+    const { isAuthenticated, loading } = useAuthState()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState<any>({})
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push('/')
+        }
+    }, [isAuthenticated])
+
     const submitHandler = async (e: FormEvent) => {
         e.preventDefault()
         try {
-            await axios.post('/auth/login', {
+            dispatch('LOGIN_REQUEST')
+
+            const { data } = await axios.post('/auth/login', {
                 username,
                 password
             })
 
-            router.push('/')
+            dispatch('LOGIN_SUCCESS', data)
         } catch (error) {
             setErrors(error.response.data)
-            console.log(error)
+
+            dispatch('LOGIN_FAIL')
         }
     }
+
     return (
         <div className='flex bg-white'>
             <Head>
@@ -55,7 +70,10 @@ export default function Register() {
                             error={errors.password}
                             type='password'
                         />
-                        <button className='w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded'>
+                        <button
+                            className='w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded'
+                            disabled={loading}
+                        >
                             Login
                         </button>
                     </form>

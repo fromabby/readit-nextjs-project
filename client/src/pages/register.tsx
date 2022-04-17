@@ -2,17 +2,29 @@ import axios from 'axios'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useState, useEffect } from 'react'
 import InputGroup from '../components/InputGroup'
+
+import { useAuthDispatch, useAuthState } from '../context/auth'
 
 export default function Register() {
     const router = useRouter()
+
+    // const dispatch = useAuthDispatch()
+
+    const { isAuthenticated } = useAuthState()
 
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [agreement, setAgreement] = useState(false)
     const [errors, setErrors] = useState<any>({})
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push('/')
+        }
+    }, [isAuthenticated])
 
     const submitHandler = async (e: FormEvent) => {
         e.preventDefault()
@@ -34,6 +46,7 @@ export default function Register() {
             setErrors(error.response.data)
         }
     }
+    
     return (
         <div className='flex bg-white'>
             <Head>
