@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { isEmpty } from 'class-validator'
 import { connectionSource } from '../data-source'
 
-import { User, Subs } from '../entities/index'
+import { User, Subs, Post } from '../entities/index'
 
 exports.createSub = async (req: Request, res: Response) => {
     const { name, title, description } = req.body
@@ -36,19 +36,56 @@ exports.createSub = async (req: Request, res: Response) => {
         res.json(sub)
     } catch (error) {
         res.status(400).json({
-            error
+            error,
         })
     }
 }
 
-exports.getMySubs = async (req: Request, res: Response) => {}
+exports.getMySubs = async (req: Request, res: Response) => {
+    return res.json({
+        message: 'Get ALL MY subs'
+    })}
 
-exports.getMySub = async (req: Request, res: Response) => {}
+exports.getMySub = async (req: Request, res: Response) => {
+    return res.json({
+        message: 'Get MY sub'
+    })}
 
-exports.getSubs = async (req: Request, res: Response) => {}
+exports.getSubs = async (req: Request, res: Response) => {
+    return res.json({
+        message: 'Get all subs'
+    })}
 
-exports.getSub = async (req: Request, res: Response) => {}
+exports.getSub = async (req: Request, res: Response) => {
+    const name = req.params.name
 
-exports.updateSub = async (req: Request, res: Response) => {}
+    try {
+        const sub = await Subs.findOneOrFail({ where: { name } })
+        const posts = await Post.find({
+            where: { subName: sub.name }, 
+            order: { createdAt: 'DESC' },
+            relations: ['comments', 'votes']
+        })
 
-exports.deleteSub = async (req: Request, res: Response) => {}
+        sub.posts = posts
+
+        if(res.locals.user) {
+            sub.posts.forEach(p => p.setUserVote(res.locals.user))
+        }
+
+        return res.json(sub)
+    } catch (error) {
+        return res.status(404).json({ sub: 'Sub not found' })
+    }
+}
+
+exports.updateSub = async (req: Request, res: Response) => {
+    return res.json({
+        message: 'Update sub'
+    })
+}
+
+exports.deleteSub = async (req: Request, res: Response) => {
+    return res.json({
+        message: 'Delete sub'
+    })}
