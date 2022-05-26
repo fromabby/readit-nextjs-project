@@ -14,5 +14,5 @@ export const connectionSource = new DataSource({
     logging: true,
     entities: [User, Post, Subs, Comment, Vote],
     migrations: [],
-    subscribers: []
+    subscribers: [],
 })

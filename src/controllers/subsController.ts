@@ -1,12 +1,21 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { isEmpty } from 'class-validator'
 import { connectionSource } from '../data-source'
+import fs from 'fs'
 
 import { User, Subs, Post } from '../entities/index'
 
 exports.createSub = async (req: Request, res: Response) => {
-    const { name, title, description } = req.body
+    const { name, title, description, type } = req.body
 
+    let oldImageUrn: string = ''
+
+    if (type !== 'image' && type !== 'banner') {
+        fs.unlinkSync(req.file?.path || '')
+        return res.status(400).json({ error: 'Invalid type' })
+    }
+
+    const image = req.file?.filename || ''
     const user: User = res.locals.user
 
     try {
@@ -31,7 +40,19 @@ exports.createSub = async (req: Request, res: Response) => {
         sub.name = name
         sub.user = user
 
+        if (type === 'image') {
+            oldImageUrn = sub.imageUrn || ''
+            sub.imageUrn = image
+        } else {
+            oldImageUrn = sub.bannerUrn || ''
+            sub.bannerUrn = image
+        }
+
         await sub.save()
+
+        if (oldImageUrn !== '') {
+            fs.unlinkSync(`public\\images\\${oldImageUrn}`)
+        }
 
         res.json(sub)
     } catch (error) {
@@ -43,18 +64,21 @@ exports.createSub = async (req: Request, res: Response) => {
 
 exports.getMySubs = async (req: Request, res: Response) => {
     return res.json({
-        message: 'Get ALL MY subs'
-    })}
+        message: 'Get ALL MY subs',
+    })
+}
 
 exports.getMySub = async (req: Request, res: Response) => {
     return res.json({
-        message: 'Get MY sub'
-    })}
+        message: 'Get MY sub',
+    })
+}
 
 exports.getSubs = async (req: Request, res: Response) => {
     return res.json({
-        message: 'Get all subs'
-    })}
+        message: 'Get all subs',
+    })
+}
 
 exports.getSub = async (req: Request, res: Response) => {
     const name = req.params.name
@@ -62,15 +86,15 @@ exports.getSub = async (req: Request, res: Response) => {
     try {
         const sub = await Subs.findOneOrFail({ where: { name } })
         const posts = await Post.find({
-            where: { subName: sub.name }, 
+            where: { subName: sub.name },
             order: { createdAt: 'DESC' },
-            relations: ['comments', 'votes']
+            relations: ['comments', 'votes'],
         })
 
         sub.posts = posts
 
-        if(res.locals.user) {
-            sub.posts.forEach(p => p.setUserVote(res.locals.user))
+        if (res.locals.user) {
+            sub.posts.forEach((p) => p.setUserVote(res.locals.user))
         }
 
         return res.json(sub)
@@ -79,13 +103,91 @@ exports.getSub = async (req: Request, res: Response) => {
     }
 }
 
+exports.ownSub = async (req: Request, res: Response, next: NextFunction) => {
+    const user: User = res.locals.user
+
+    try {
+        const sub = await Subs.findOneOrFail({
+            where: { name: req.params.name },
+        })
+
+        if (sub.username !== user.username) {
+            return res.status(403).json({ error: 'You dont own this sub' })
+        }
+
+        res.locals.sub = sub
+
+        return next()
+    } catch (error) {
+        return res.status(500).json({ error: 'Something went wrong' })
+    }
+}
+
+exports.uploadSubImage = async (req: Request, res: Response) => {
+    const sub: Subs = res.locals.sub
+
+    try {
+    } catch (error) {}
+
+    return res.json({ success: true })
+}
+
 exports.updateSub = async (req: Request, res: Response) => {
-    return res.json({
-        message: 'Update sub'
-    })
+    // check existing sub
+    const sub = await Subs.findOneOrFail({ where: { name: req.params.name } })
+
+    if (!sub) {
+        return res.status(500).json({ error: 'Sub does not exist ' })
+    }
+
+    // get details
+    const { title, description } = sub
+
+    // update
+    if (req.body.type !== 'image' && req.body.type !== 'banner') {
+        fs.unlinkSync(req.file?.path || '')
+        return res.status(400).json({ error: 'Invalid type' })
+    }
+
+    let oldImageUrn: string = ''
+    const image = req.file?.filename || ''
+
+    try {
+        let errors: any = {}
+
+        if (Object.keys(errors).length > 0) throw errors
+
+        sub.title = req.body.title ? req.body.title : title
+        sub.description = req.body.description
+            ? req.body.description
+            : description
+        sub.createdAt = sub.createdAt
+        sub.updatedAt = new Date(Date.now())
+
+        if (req.body.type === 'image') {
+            oldImageUrn = sub.imageUrn || ''
+            sub.imageUrn = image
+        } else {
+            oldImageUrn = sub.bannerUrn || ''
+            sub.bannerUrn = image
+        }
+
+        await sub.save()
+
+        if (oldImageUrn !== '') {
+            fs.unlinkSync(`public/images/${oldImageUrn}`)
+        }
+
+        res.json(sub)
+    } catch (error) {
+        res.status(400).json({
+            error,
+        })
+    }
 }
 
 exports.deleteSub = async (req: Request, res: Response) => {
     return res.json({
-        message: 'Delete sub'
-    })}
+        message: 'Delete sub',
+    })
+}

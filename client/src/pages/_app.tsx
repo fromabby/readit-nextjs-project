@@ -1,14 +1,14 @@
 import axios from 'axios'
-import { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
-
-import '../styles/tailwind.css'
-import '../styles/icons.css'
 
 import { AuthProvider } from '../context/auth'
 
+import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'
+
+import '../styles/tailwind.css'
+import '../styles/icons.css'
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
 axios.defaults.withCredentials = true
@@ -27,13 +27,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             throw error.response.data
         }
     }
+    
     return (
-        <SWRConfig
-            value={{
-                fetcher,
-                dedupingInterval: 10000,
-            }}
-        >
+        <SWRConfig value={{ fetcher, dedupingInterval: 10000 }}>
             <AuthProvider>
                 {!authRoute && <Navbar />}
                 <div className={authRoute ? '' : 'pt-12'}>

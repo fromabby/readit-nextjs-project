@@ -10,23 +10,31 @@ import cors from 'cors'
 // console.log(path.resolve(__dirname+'/.env'))
 dotenv.config({ path: path.resolve(__dirname + '/.env') })
 
-import { authRoutes, postRoutes, subsRoutes, commentRoutes, voteRoutes } from './routes/index'
+import {
+    authRoutes,
+    postRoutes,
+    subsRoutes,
+    commentRoutes,
+    voteRoutes,
+} from './routes/index'
 import { trim } from './middlewares/index'
 
 const app = express()
 const PORT = process.env.PORT
 // const ENVIRONMENT = process.env.NODE_ENV
 
-
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(trim)
 app.use(cookieParser())
-app.use(cors({
-    credentials: true,
-    origin: process.env.ORIGIN,
-    optionsSuccessStatus: 200
-}))
+app.use(
+    cors({
+        credentials: true,
+        origin: process.env.ORIGIN,
+        optionsSuccessStatus: 200,
+    })
+)
+app.use(express.static('public'))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/post', postRoutes)
