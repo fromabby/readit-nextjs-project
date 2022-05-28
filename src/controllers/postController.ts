@@ -25,7 +25,7 @@ exports.createPost = async (req: Request, res: Response) => {
         res.json(post)
     } catch (error) {
         res.status(500).json({
-            error: 'cannot post'
+            error: 'cannot post',
         })
     }
 }
@@ -38,16 +38,16 @@ exports.getPosts = async (req: Request, res: Response) => {
     try {
         const posts = await Post.find({
             order: { createdAt: 'DESC' },
-            relations: ['votes', 'sub']
+            relations: ['votes', 'sub'],
         })
 
-        if(res.locals.user) {
-            posts.forEach(post => post.setUserVote(res.locals.user))
+        if (res.locals.user) {
+            posts.forEach((post) => post.setUserVote(res.locals.user))
         }
-        
+
         res.json({
             success: true,
-            posts
+            posts,
         })
     } catch (error) {
         res.status(500).json(error)
@@ -60,15 +60,19 @@ exports.getPost = async (req: Request, res: Response) => {
         const post = await Post.findOneOrFail({
             where: {
                 identifier,
-                slug
-            }, 
-            relations: ['sub', 'comments']
+                slug,
+            },
+            relations: ['sub', 'comments', 'votes'],
         })
+
+        if (res.locals.user) {
+            post.setUserVote(res.locals.user)
+        }
 
         res.json(post)
     } catch (error) {
         res.status(500).json({
-            error: 'Post not found'
+            error: 'Post not found',
         })
     }
 }

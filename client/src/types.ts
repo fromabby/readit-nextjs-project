@@ -3,6 +3,7 @@ export interface Post {
     title: string
     body?: string //optional
     slug: string
+    sub?: Sub
     subName: string
     createdAt: string
     updatedAt: string

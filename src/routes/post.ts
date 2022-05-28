@@ -9,7 +9,7 @@ router.get('/me/posts', authorize, post.getMyPosts)
 router.get('/me/:id', authorize, post.getMyPost)
 
 router.get('/', user, post.getPosts)
-router.get('/:identifier/:slug', post.getPost)
+router.get('/:identifier/:slug', user, post.getPost)
 router.put('/:id', authorize, post.updatePost)
 router.delete('/:id', authorize, post.deletePost)
 

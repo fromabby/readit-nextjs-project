@@ -44,7 +44,7 @@ export default function Home() {
                                     key={sub.name}
                                 >
                                     {/* image */}
-                                    <div className='rounded-full overflow-hidden mr-2 hover:cursor-pointer'>
+                                    <div className='rounded-full w-6 h-6 overflow-hidden mr-2 hover:cursor-pointer'>
                                         <Link href={`/r/${sub.name}`}>
                                             <Image
                                                 src={sub.imageUrl}
