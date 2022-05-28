@@ -19,3 +19,19 @@ export interface User {
     createdAt: string
     updatedAt: string
 }
+
+export interface Sub {
+    title: string
+    description: string
+    name: string
+    imageUrn: string
+    username: string
+    bannerUrn: null
+    id: 8
+    posts: Post[]
+    createdAt: string
+    updatedAt: string
+    imageUrl: string
+    bannerUrl: string
+    postCount?: number
+}

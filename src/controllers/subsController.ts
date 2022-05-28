@@ -11,7 +11,9 @@ exports.createSub = async (req: Request, res: Response) => {
     let oldImageUrn: string = ''
 
     if (type !== 'image' && type !== 'banner') {
-        fs.unlinkSync(req.file?.path || '')
+        if (req.file?.path) {
+            fs.unlinkSync(req.file?.path)
+        }
         return res.status(400).json({ error: 'Invalid type' })
     }
 
@@ -145,7 +147,9 @@ exports.updateSub = async (req: Request, res: Response) => {
 
     // update
     if (req.body.type !== 'image' && req.body.type !== 'banner') {
-        fs.unlinkSync(req.file?.path || '')
+        if (req.file?.path) {
+            fs.unlinkSync(req.file?.path)
+        }
         return res.status(400).json({ error: 'Invalid type' })
     }
 
@@ -190,4 +194,25 @@ exports.deleteSub = async (req: Request, res: Response) => {
     return res.json({
         message: 'Delete sub',
     })
+}
+
+exports.topSubs = async (_: Request, res: Response) => {
+    try {
+        const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=robohash&f=y')`
+        const subs = await connectionSource
+            .createQueryBuilder()
+            .select(
+                `s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`
+            )
+            .from(Subs, 's')
+            .leftJoin(Post, 'p', `s.name = p."subName"`)
+            .groupBy('s.title, s.name, "imageUrl"')
+            .orderBy(`"postCount"`, 'DESC')
+            .limit(5)
+            .execute()
+
+        res.json(subs)
+    } catch (error) {
+        res.status(500).json({ error: 'Something went wrong' })
+    }
 }

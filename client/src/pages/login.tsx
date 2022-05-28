@@ -19,7 +19,7 @@ export default function Register() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.push('/')
+            router.back()
         }
     }, [isAuthenticated])
 
@@ -30,7 +30,7 @@ export default function Register() {
 
             const { data } = await axios.post('/auth/login', {
                 username,
-                password
+                password,
             })
 
             dispatch('LOGIN_SUCCESS', data)

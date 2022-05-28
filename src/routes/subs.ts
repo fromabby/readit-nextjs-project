@@ -28,10 +28,11 @@ const router = Router()
 const { subs } = require('../controllers/index')
 
 router.post('/new', user, authorize, upload.single('image'), subs.createSub)
-router.get('/me/subs', authorize, subs.getMySubs)
-router.get('/me/:id', authorize, subs.getMySub)
+router.get('/me/subs', user, authorize, subs.getMySubs)
+router.get('/me/:id', user, authorize, subs.getMySub)
 
-router.get('/subs', user, authorize, subs.getSubs)
+router.get('/subs', user, subs.getSubs)
+router.get('/top-subs', user, subs.topSubs)
 router.get('/:name', user, subs.getSub)
 router.put(
     '/:name',
@@ -41,6 +42,6 @@ router.put(
     upload.single('image'),
     subs.updateSub
 )
-router.delete('/:id', authorize, subs.deleteSub)
+router.delete('/:id', user, authorize, subs.deleteSub)
 
 export default router

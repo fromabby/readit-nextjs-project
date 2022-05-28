@@ -1,37 +1,16 @@
-import axios from 'axios'
-import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
 import useSWR from 'swr'
 
-import { Post } from '../types'
-
 import PostCard from '../components/PostCard'
+import { Sub } from '../types'
 
 // export default function Home({ posts }) {
 export default function Home() {
     const { data, error, isValidating: loading } = useSWR('/post')
-
-    // client-side rendering
-
-    // const [posts, setPosts] = useState<Post[]>([])
-    // const [loading, setLoading] = useState(true)
-    // useEffect(() => {
-    //     const fetchPosts = async () => {
-    //         try {
-    //             const { data } = await axios.get('/post')
-
-    //             setPosts(data.posts)
-    //             setLoading(false)
-    //         } catch (error) {
-    //             console.log(error.response.data)
-    //             setLoading(false)
-    //         }
-    //     }
-
-    //     fetchPosts()
-    // }, [])
+    const { data: topSubs } = useSWR('/subs/top-subs')
 
     return (
         <>
@@ -51,6 +30,44 @@ export default function Home() {
                     {!loading && error && <p>Cannot retrieve posts</p>}
                 </div>
                 {/* Sidebar */}
+                <div className='ml-6 w-80'>
+                    <div className='bg-white rounded'>
+                        <div className='p-4 border-b-2'>
+                            <p className='text-lg font-semibold text-center'>
+                                Top Communities
+                            </p>
+                        </div>
+                        <div className=''>
+                            {topSubs?.map((sub: Sub) => (
+                                <div
+                                    className='flex items-center px-4 py-2 text-xs border-b'
+                                    key={sub.name}
+                                >
+                                    {/* image */}
+                                    <div className='rounded-full overflow-hidden mr-2 hover:cursor-pointer'>
+                                        <Link href={`/r/${sub.name}`}>
+                                            <Image
+                                                src={sub.imageUrl}
+                                                alt={'Sub'}
+                                                width={(6 * 16) / 4}
+                                                height={(6 * 16) / 4}
+                                            />
+                                        </Link>
+                                    </div>
+                                    {/* link */}
+                                    <Link href={`/r/${sub.name}`}>
+                                        <a className='font-bold hover:cursor-pointer'>
+                                            /r/${sub.name}
+                                        </a>
+                                    </Link>
+                                    <p className='ml-auto font-med'>
+                                        {sub.postCount}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )
